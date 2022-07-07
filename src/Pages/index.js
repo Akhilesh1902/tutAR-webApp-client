@@ -12,6 +12,7 @@ const Pages = ({ socket }) => {
         <Route path='/' element={<Landing socket={socket} />} />
         <Route path='/admin' element={<Admin socket={socket} />} />
         <Route path='/admin/:subpath' element={<Admin socket={socket} />} />
+        <Route path='/class' element={<Class />} />
         <Route path='/class/:id' element={<Class />} />
         <Route path='/*' element={<Error />} />
       </Routes>

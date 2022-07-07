@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState } from 'react';
 import Modal from '../Utils/Modal';
 import PreviewCanvas from './PreviewCanvas';
 
@@ -6,7 +6,14 @@ const NewModel = ({ socket }) => {
   const image_input_ref = useRef();
   const [modal, setModal] = useState();
   const thumbRef = useRef();
-  const [modelData, setModelData] = useState({});
+  const [modelData, setModelData] = useState({
+    thumbName: '',
+    thumb: null,
+    file: null,
+    name: '',
+    Class: '',
+    Subject: '',
+  });
 
   const onFileCange = (e) => {
     console.log(e.target.id);
@@ -15,11 +22,11 @@ const NewModel = ({ socket }) => {
 
       const IURL = URL.createObjectURL(file);
       thumbRef.current.style.backgroundImage = `url(${IURL})`;
-      const thumbName = file.name;
+      const thumbName = file.name.replace(/ /g, '_');
       setModelData({ ...modelData, thumbName, thumb: file });
     } else {
       const file = e.target.files[0];
-      const name = file.name;
+      const name = file.name.replace(/ /g, '_');
       if (!name.includes('.glb')) {
         alert('upload glb file');
         return;
@@ -28,10 +35,6 @@ const NewModel = ({ socket }) => {
       // console.log(name);
     }
   };
-
-  useEffect(() => {
-    console.log(modelData);
-  }, [modelData]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -55,11 +58,11 @@ const NewModel = ({ socket }) => {
           <div className='flex w-full justify-between gap-3'>
             <div className='flex  flex-col gap-3'>
               <div>
-                <p>Add in thumbnail</p>
+                <p>Add in Thumbnail</p>
                 <div className='flex'>
                   <div
                     ref={thumbRef}
-                    className='bg-accent w-20 h-20 !bg-cover !bg-top'></div>
+                    className='bg-accent w-20 h-20 !bg-cover mr-3 !bg-top'></div>
                   <input
                     ref={image_input_ref}
                     type='file'
@@ -71,7 +74,7 @@ const NewModel = ({ socket }) => {
                 </div>
               </div>
               <div className='flex flex-col'>
-                <p>Add in image</p>
+                <p>Add in Model</p>
                 <input
                   ref={image_input_ref}
                   type='file'
@@ -81,7 +84,7 @@ const NewModel = ({ socket }) => {
                   onChange={onFileCange}
                 />
                 <span className='p-0 m-0 leading-none ml-2 text-xs  italic'>
-                  max-size:3.5mb
+                  max-size:12mb
                 </span>
               </div>
               {/* <DraggablePreview imgData={imgData} setImgData={setImgData} /> */}
@@ -90,19 +93,32 @@ const NewModel = ({ socket }) => {
               </div>
             </div>
             <div className='flex flex-col'>
-              <h1>Add postion and scaling setting</h1>
-              <div>
-                <p>Set Scale</p>
-                <input
-                  //   value={imgData.scale * 200}
-                  //   onChange={(e) =>
-                  //     setImgData({ ...imgData, scale: e.target.value / 200 })
-                  //   }
-                  type='range'
-                  min='20'
-                  max='200'
-                />
-                <p>Click on the canvas to position the image</p>
+              <h1>Add Additional</h1>
+              <div className=' flex flex-col gap-2'>
+                <div className=' flex flex-col gap-1'>
+                  <p>Class :</p>
+                  <input
+                    type='text'
+                    value={modelData.Class}
+                    required
+                    onChange={(e) => {
+                      setModelData({ ...modelData, Class: e.target.value });
+                    }}
+                    className='rounded text-dark px-2 py-1 outline-0'
+                  />
+                </div>
+                <div className=' flex flex-col gap-1'>
+                  <p>Subject :</p>
+                  <input
+                    type='text'
+                    required
+                    value={modelData.Subject}
+                    onChange={(e) => {
+                      setModelData({ ...modelData, Subject: e.target.value });
+                    }}
+                    className='rounded text-dark px-2 py-1 outline-0'
+                  />
+                </div>
               </div>
             </div>
           </div>

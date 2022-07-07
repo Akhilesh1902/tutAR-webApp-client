@@ -12,6 +12,7 @@ module.exports = {
       light: '#e2e8f0',
       dark: '#161616',
       lime: '#65a30d',
+      mid: '#F15769',
     },
   },
   plugins: [],

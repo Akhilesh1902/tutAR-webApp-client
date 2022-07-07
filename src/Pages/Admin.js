@@ -1,11 +1,10 @@
 import React from 'react';
 import { useParams, NavLink, Link } from 'react-router-dom';
+import DashBoard from '../Components/Admin/DashBoard';
 import NewModel from '../Components/Admin/NewModel';
 
 const Admin = ({ socket }) => {
   const { subpath } = useParams();
-  // console.log(subpath);
-
   return (
     <div className='overflow-hidden main bg-slate text-gray h-screen flex flex-col'>
       <nav className='flex justify-between py-3 items-center px-5 bg-purple'>
@@ -13,7 +12,7 @@ const Admin = ({ socket }) => {
           <img src='/logo3.png' className='w-16 ml-4' alt='Tutar Logo' />
         </Link>
         <button
-          className='bg-mid rounded p-1 px-3 text-sm text-purple'
+          className='bg-mid rounded p-1 px-3 text-sm text-dark'
           onClick={() => {}}>
           Log-Out
         </button>
@@ -30,8 +29,8 @@ const Admin = ({ socket }) => {
           </NavLink>
         </section>
         <section className='right-section bg-dark p-4 h-full w-full'>
+          {subpath === undefined && <DashBoard socket={socket} />}
           {subpath === 'newModel' && <NewModel socket={socket} />}
-          {/* {subpath === '' && <NewModel />} */}
         </section>
       </div>
     </div>

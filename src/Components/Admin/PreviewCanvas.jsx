@@ -9,7 +9,7 @@ const PreviewCanvas = ({ glbFile }) => {
   return (
     <Canvas>
       <OrbitControls />
-      <ModelWrapper glbFile={glbFile} />
+      {glbFile && <ModelWrapper glbFile={glbFile} />}
     </Canvas>
   );
 };

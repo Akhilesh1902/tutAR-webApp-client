@@ -14,3 +14,11 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+rotated {
+  position: absolute;
+  transform: rotate(90deg);
+  max-width: 100vh;
+  max-height: 100vw;
+  margin: auto;
+}

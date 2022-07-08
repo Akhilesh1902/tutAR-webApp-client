@@ -18,7 +18,7 @@ function App() {
 
   return (
     <BrowserRouter>
-      <Pages socket={socket} />
+      {socket && <Pages SERVER_URL={SERVER_URL} socket={socket} />}
     </BrowserRouter>
   );
 }

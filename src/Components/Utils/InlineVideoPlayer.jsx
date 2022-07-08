@@ -24,7 +24,7 @@ const InlineVideoPlayer = () => {
       autoPlay
       loop
       ref={video_ref}
-      className='w-full '></video>
+      className='w-full h-screen'></video>
   );
 };
 

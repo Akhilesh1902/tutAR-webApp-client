@@ -14,6 +14,10 @@ const Landing = () => {
         <Link to={`/admin`} className='text-text mt-6 underline'>
           {`To Admin >`}
         </Link>
+        <p className='mt-4'>If you want to explore Classes</p>
+        <Link to={`/class`} className='text-text mt-6 underline'>
+          {`To Class >`}
+        </Link>
       </div>
     </div>
   );

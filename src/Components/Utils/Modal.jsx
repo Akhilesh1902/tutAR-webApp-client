@@ -1,5 +1,3 @@
-import React from 'react';
-
 const Modal = ({ type, handleSubmit, setModal }) => {
   return (
     <div className='z-10 absolute w-fit h-fit text-accent p-5 rounded flex flex-col gap-2 items-center inset-1/2 bg-gray'>

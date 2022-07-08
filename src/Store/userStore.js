@@ -1,8 +1,8 @@
 import create from 'zustand';
 
-import { persist, devtools } from 'zustand/middleware';
+// import { persist, devtools } from 'zustand/middleware';
 
-const useUserState = create((set) => ({
+export const useUserState = create((set) => ({
   user: {},
   setUesr: ({ name, status, id, password }) => {
     set((state) => {

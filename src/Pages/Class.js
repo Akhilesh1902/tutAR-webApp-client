@@ -1,33 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import useFetch from '../Components/customHooks/useFetch';
 import NavBar from '../Components/Utils/NavBar';
 
-const Class = ({ socket, SERVER_URL }) => {
+const Class = ({ SERVER_URL }) => {
   const [classes, setClasses] = useState({ status: true, value: [] });
-  // const [models, setModels] = useState({ status: false, models: [] });
-  // const [data, setData] = useState();
 
-  const [data, getData] = useFetch(SERVER_URL);
+  const [data] = useFetch(SERVER_URL);
 
   useEffect(() => {
     if (!data) return;
     const allClasses = new Set(data.map((i) => i.Class));
     setClasses((classes) => ({ ...classes, value: [...allClasses] }));
   }, [data]);
-
-  // const handleClassSelection = (e) => {
-  //   const selectedClass = e.target.innerText;
-  //   // const models = data.filter(
-  //   //   (item) => item.Class.toUpperCase() === selectedClass.toUpperCase()
-  //   // );
-  //   // setModels({ status: true, models });
-  //   // console.log(models);
-  // };
-
-  const handleSubjectClick = (e) => {
-    const current = e.target;
-  };
 
   return (
     <div className='flex flex-col h-full justify-center relative items-center'>

@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 const useFetch = (SERVER_URL, Class = '') => {
   const [data, setData] = useState();
 
   const fetchData = async () => {
-    if (Class != '') {
+    if (Class !== '') {
       const filterdData = await fetch(`${SERVER_URL}${Class}`);
       const json = await filterdData.json();
       setData(json);
@@ -17,6 +17,7 @@ const useFetch = (SERVER_URL, Class = '') => {
 
   useEffect(() => {
     fetchData();
+    // eslint-disable-next-line
   }, []);
 
   return [data, fetchData];

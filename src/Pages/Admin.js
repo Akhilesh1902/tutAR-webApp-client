@@ -1,4 +1,3 @@
-import React from 'react';
 import { useParams, NavLink, Link } from 'react-router-dom';
 import DashBoard from '../Components/Admin/DashBoard';
 import NewModel from '../Components/Admin/NewModel';

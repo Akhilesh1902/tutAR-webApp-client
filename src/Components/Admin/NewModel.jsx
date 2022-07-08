@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import Modal from '../Utils/Modal';
 import PreviewCanvas from './PreviewCanvas';
 

@@ -1,4 +1,3 @@
-import React from 'react';
 import { Canvas } from '@react-three/fiber';
 import ModelWrapper from '../threeJs/ModelWrapper';
 import { OrbitControls } from '@react-three/drei';

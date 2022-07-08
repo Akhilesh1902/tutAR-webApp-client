@@ -1,4 +1,4 @@
-import React, { Suspense, useState, useEffect } from 'react';
+import { Suspense, useState, useEffect } from 'react';
 import Model from './Model';
 
 const ModelWrapper = ({ glbFile }) => {

@@ -6,7 +6,7 @@ import Pages from './Pages';
 function App() {
   const [socket, setSocket] = useState(null);
 
-  const SERVER_URL = 'http://localhost:3030/';
+  const SERVER_URL = process.env.REACT_APP_SERVER_URL;
 
   useEffect(() => {
     const c = () => {

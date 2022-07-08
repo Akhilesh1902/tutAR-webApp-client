@@ -14,6 +14,7 @@ function App() {
       setSocket(s);
     };
     c();
+    // eslint-disable-next-line
   }, []);
 
   return (

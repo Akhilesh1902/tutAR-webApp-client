@@ -1,7 +1,7 @@
 import { Suspense, useState, useEffect } from 'react';
 import Model from './Model';
 
-const ModelWrapper = ({ glbFile }) => {
+const ModelWrapper = ({ glbFile, modelProps }) => {
   const [objURL, setObjURL] = useState('');
 
   useEffect(() => {
@@ -16,7 +16,7 @@ const ModelWrapper = ({ glbFile }) => {
       <ambientLight intensity={0.2} />
       <directionalLight intensity={0.7} position={[1, 1, 1]} />
       <Suspense fallback={null}>
-        <Model Url={objURL} />
+        <Model modelProps={modelProps} Url={objURL} />
       </Suspense>
     </>
   );

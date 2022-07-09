@@ -1,6 +1,6 @@
 import { useRef, useEffect } from 'react';
 
-const InlineVideoPlayer = () => {
+const InlineVideoPlayer = ({ flip }) => {
   const video_ref = useRef();
 
   useEffect(() => {
@@ -11,6 +11,7 @@ const InlineVideoPlayer = () => {
           video: true,
         })
         .catch((err) => {
+          alert('No Camera found!');
           console.log(err);
         });
       video_ref.current.srcObject = stream;
@@ -24,7 +25,7 @@ const InlineVideoPlayer = () => {
       autoPlay
       loop
       ref={video_ref}
-      className='w-full h-screen'></video>
+      className={`w-full h-screen ${flip ? 'video-t' : ''}`}></video>
   );
 };
 

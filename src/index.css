@@ -22,3 +22,7 @@ rotated {
   max-height: 100vw;
   margin: auto;
 }
+
+.video-t {
+  transform: rotateY(180deg);
+}

@@ -24,8 +24,11 @@ const InlineVideoPlayer = ({ flip }) => {
       playsInline
       autoPlay
       loop
+      muted
       ref={video_ref}
-      className={`w-full h-screen ${flip ? 'video-t' : ''}`}></video>
+      className={`w-full h-screen object-cover object-center ${
+        flip ? 'video-t' : ''
+      }`}></video>
   );
 };
 

@@ -6,7 +6,7 @@ const ModelWrapper = ({ glbFile, modelProps }) => {
 
   useEffect(() => {
     const IURL = URL.createObjectURL(glbFile);
-    console.log(IURL.split('b:')[1]);
+    // console.log(IURL.split('b:')[1]);
     setObjURL(IURL.split('b:')[1]);
     setObjURL(IURL);
   }, [glbFile]);

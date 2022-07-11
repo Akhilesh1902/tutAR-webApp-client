@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import PreviewCanvas from '../Admin/PreviewCanvas';
 import useFetch from '../customHooks/useFetch';
 import IVP from '../Utils/InlineVideoPlayer';
-import { BiZoomIn, BiZoomOut } from 'react-icons/bi';
-import { TbRotate360 } from 'react-icons/tb';
+import { BiZoomIn, BiZoomOut, BiCamera, BiCameraOff } from 'react-icons/bi';
+import { TbFlipVertical } from 'react-icons/tb';
+import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
+import { MdFlipCameraIos } from 'react-icons/md';
+import { VscRecord } from 'react-icons/vsc';
 
 const Room = ({ SERVER_URL, socket }) => {
   const { id } = useParams();
@@ -13,13 +16,24 @@ const Room = ({ SERVER_URL, socket }) => {
   const [modelProps, setModelProps] = useState({
     rotation: 0,
     autoRotate: false,
+    scale: 1,
   });
-  const [flip, setFlip] = useState(false);
+  const [UIProps, setUIProps] = useState({
+    showUI: true,
+    camera: true,
+    backCamera: true,
+    cameraFlip: false,
+    hideThumbnails: true,
+  });
 
   const [data] = useFetch(SERVER_URL, id);
 
+  const buttonStyle = `bg-mid rounded w-fit text-text text-center p-2 ${
+    UIProps.showUI ? '' : 'hidden'
+  }`;
+
   useEffect(() => {
-    console.log(data);
+    // console.log(data);
     if (data) setModelData(data[0]);
   }, [data]);
 
@@ -49,50 +63,106 @@ const Room = ({ SERVER_URL, socket }) => {
   };
 
   return (
-    <div className='grid items-center h-screen w-screen'>
-      <div className='relative h-screen overflow-hidden w-screen flex'>
-        <IVP flip={flip}></IVP>
-        <div className='absolute h-screen w-full top-0'>
+    <div className='grid items-center  select-none  h-screen w-screen'>
+      <div className='relative h-screen overflow-hidden w-screen grid items-center'>
+        <IVP flip={UIProps.cameraFlip}></IVP>
+        <div className='absolute z-50 h-screen w-full top-0'>
           {blob && <PreviewCanvas modelProps={modelProps} glbFile={blob} />}
         </div>
-        <div className='absolute p-5 flex w-screen justify-between gap-2 top-0'>
-          <div className='flex flex-col gap-3'>
-            {data?.map((item, i) => {
-              return (
-                <div key={i} className=' w-fit'>
-                  <img
-                    className='w-20'
-                    src={`data:image/jpeg;base64,` + item.thumb}
-                    alt={item.name}
-                    onClick={handleThumbClick}
-                  />
+        <div className='absolute p-5 flex w-screen h-screen  justify-between gap-2 top-0'>
+          <div className='flex z-50 gap-3 h-full'>
+            <div className={`flex h-full justify-btween flex-col gap-3 `}>
+              <div className='flex flex-col gap-2'>
+                {UIProps.hideThumbnails ? null : (
+                  <Link
+                    to={'/calss'}
+                    className={`${buttonStyle} text-xs !w-full`}>{`< Back`}</Link>
+                )}
+              </div>
+              {UIProps.hideThumbnails ? null : (
+                <div className='flex flex-col gap-3'>
+                  {data?.map((item, i) => {
+                    return (
+                      <div
+                        key={i}
+                        className={` w-fit ${UIProps.showUI ? '' : 'hidden'}`}>
+                        <img
+                          className='w-20'
+                          src={`data:image/jpeg;base64,` + item.thumb}
+                          alt={item.name}
+                          onClick={handleThumbClick}
+                        />
+                      </div>
+                    );
+                  })}
                 </div>
-              );
-            })}
+              )}
+            </div>
+            <div className='text-3xl flex flex-col items-center gap-3'>
+              <button
+                className={`${buttonStyle} text-xs`}
+                onClick={() => {
+                  setUIProps((up) => ({
+                    ...up,
+                    hideThumbnails: !up.hideThumbnails,
+                  }));
+                }}>
+                {UIProps.hideThumbnails ? 'Show Thumb' : 'Hide Thumb'}
+              </button>
+              <button
+                className={buttonStyle}
+                onClick={() => {
+                  setUIProps((up) => ({ ...up, camera: !up.camera }));
+                }}>
+                {UIProps.camera ? <BiCameraOff /> : <BiCamera />}
+              </button>
+              <button className={buttonStyle}>
+                <MdFlipCameraIos />
+              </button>
+              <button className={buttonStyle}>
+                <TbFlipVertical
+                  onClick={() =>
+                    setUIProps((up) => ({ ...up, cameraFlip: !up.cameraFlip }))
+                  }></TbFlipVertical>
+              </button>
+              <button
+                className={`${buttonStyle} bg-text rounded-full text-mid`}>
+                <VscRecord />
+              </button>
+            </div>
           </div>
-          <div className='text-text text-3xl items-center flex flex-col gap-4 '>
-            <BiZoomIn />
-            <BiZoomOut />
-            <TbRotate360
-              onClick={() => {
-                setModelProps({
-                  ...modelProps,
-                  rotation: modelProps.rotation + 0.2,
-                });
-              }}
-            />
+          <div className='text-3xl z-50 justify-self-end items-center flex flex-col gap-4 '>
             <button
-              className='text-lg bg-mid text-dark px-1 rounded'
+              className={` !block ${buttonStyle}`}
               onClick={() => {
-                setModelProps((mp) => ({ ...mp, autoRotate: !mp.autoRotate }));
+                setUIProps((up) => ({ ...up, showUI: !up.showUI }));
               }}>
-              {modelProps.autoRotate ? 'Start Rotate' : 'Stop Rotate'}
+              {UIProps.showUI ? <AiFillEyeInvisible /> : <AiFillEye />}
             </button>
             <button
-              className='text-lg bg-mid text-dark px-1 rounded'
-              onClick={() => setFlip((f) => !f)}>
-              {flip ? 'Flip On' : 'Flip Off'}{' '}
+              className={buttonStyle}
+              onClick={() =>
+                setModelProps((p) => ({ ...p, scale: (p.scale += 0.1) }))
+              }>
+              <BiZoomIn />
             </button>
+            <button
+              className={buttonStyle}
+              onClick={() =>
+                setModelProps((p) => ({ ...p, scale: (p.scale -= 0.1) }))
+              }>
+              <BiZoomOut />
+            </button>
+            {/* <button className={buttonStyle}>
+              <TbRotate360
+                onClick={() => {
+                  setModelProps({
+                    ...modelProps,
+                    rotation: modelProps.rotation + 0.2,
+                  });
+                }}
+              />
+            </button> */}
           </div>
         </div>
       </div>

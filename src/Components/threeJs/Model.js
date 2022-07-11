@@ -2,7 +2,10 @@ import { useFrame, useLoader } from '@react-three/fiber';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 
 const Model = ({ Url, modelProps }) => {
+  // console.log(Url);
   const result = useLoader(GLTFLoader, Url);
+
+  const { scale } = modelProps;
 
   useFrame(({ clock }) => {
     const et = clock.getElapsedTime();
@@ -14,7 +17,15 @@ const Model = ({ Url, modelProps }) => {
   });
 
   return (
-    <primitive object={result.scene} rotation={[0, modelProps.rotation, 0]} />
+    <>
+      {Url && result.scene && (
+        <primitive
+          object={result.scene}
+          scale={[scale, scale, scale]}
+          rotation={[0, modelProps.rotation, 0]}
+        />
+      )}
+    </>
   );
 };
 

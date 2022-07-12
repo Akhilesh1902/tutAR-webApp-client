@@ -14,6 +14,14 @@ const NewModel = ({ socket }) => {
     Class: '',
     Subject: '',
   });
+  const [modelProps, setModelProps] = useState({
+    rotation: { x: 0, y: 0, z: 0 },
+    autoRotate: false,
+    scale: 1,
+    orbitControls: false,
+  });
+
+  const [modelAnim, setModelAnim] = useState();
 
   const onFileCange = (e) => {
     console.log(e.target.id);
@@ -89,7 +97,15 @@ const NewModel = ({ socket }) => {
               </div>
               {/* <DraggablePreview imgData={imgData} setImgData={setImgData} /> */}
               <div className='h-full aspect-video border border-accent'>
-                {modelData.file && <PreviewCanvas glbFile={modelData.file} />}
+                {modelData.file && (
+                  <PreviewCanvas
+                    modelProps={modelProps}
+                    orbitControls
+                    glbFile={modelData.file}
+                    setModelAnim={setModelAnim}
+                    modelAnim={modelAnim}
+                  />
+                )}
               </div>
             </div>
             <div className='flex flex-col'>

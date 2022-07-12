@@ -2,10 +2,10 @@ import { Canvas } from '@react-three/fiber';
 import ModelWrapper from '../threeJs/ModelWrapper';
 import { OrbitControls } from '@react-three/drei';
 
-const PreviewCanvas = ({ glbFile, modelProps }) => {
+const PreviewCanvas = ({ glbFile, modelProps, orbitControls }) => {
   return (
     <Canvas>
-      <OrbitControls />
+      {orbitControls && <OrbitControls />}
       {glbFile && <ModelWrapper modelProps={modelProps} glbFile={glbFile} />}
     </Canvas>
   );

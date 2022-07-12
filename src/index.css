@@ -26,3 +26,15 @@ rotated {
 .video-t {
   transform: rotateY(180deg);
 }
+
+svg {
+  margin: auto;
+}
+button {
+  transform: scale(1);
+  transition: transform 150ms ease-in-out, background-color 150ms ease-in-out;
+}
+button:hover {
+  background-color: #65a30d;
+  transform: scale(1.1);
+}

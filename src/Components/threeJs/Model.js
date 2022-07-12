@@ -4,6 +4,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 const Model = ({ Url, modelProps }) => {
   // console.log(Url);
   const result = useLoader(GLTFLoader, Url);
+  const { rotation: rot } = modelProps;
 
   const { scale } = modelProps;
 
@@ -22,7 +23,7 @@ const Model = ({ Url, modelProps }) => {
         <primitive
           object={result.scene}
           scale={[scale, scale, scale]}
-          rotation={[0, modelProps.rotation, 0]}
+          rotation={[rot.x, rot.y, rot.z]}
         />
       )}
     </>

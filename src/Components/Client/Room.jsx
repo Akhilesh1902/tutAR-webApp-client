@@ -4,7 +4,7 @@ import PreviewCanvas from '../Admin/PreviewCanvas';
 import useFetch from '../customHooks/useFetch';
 import IVP from '../Utils/InlineVideoPlayer';
 import { BiZoomIn, BiZoomOut, BiCamera, BiCameraOff } from 'react-icons/bi';
-import { TbFlipVertical } from 'react-icons/tb';
+import { TbFlipVertical, TbRotate360, TbRotateClockwise } from 'react-icons/tb';
 import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
 import { MdFlipCameraIos } from 'react-icons/md';
 import { VscRecord } from 'react-icons/vsc';
@@ -14,9 +14,10 @@ const Room = ({ SERVER_URL, socket }) => {
   const [modelData, setModelData] = useState();
   const [blob, setBlob] = useState();
   const [modelProps, setModelProps] = useState({
-    rotation: 0,
+    rotation: { x: 0, y: 0, z: 0 },
     autoRotate: false,
     scale: 1,
+    orbitControls: false,
   });
   const [UIProps, setUIProps] = useState({
     showUI: true,
@@ -28,7 +29,7 @@ const Room = ({ SERVER_URL, socket }) => {
 
   const [data] = useFetch(SERVER_URL, id);
 
-  const buttonStyle = `bg-mid rounded w-fit text-text text-center p-2 ${
+  const buttonStyle = `bg-mid rounded w-full font-bold text-text text-center p-2 ${
     UIProps.showUI ? '' : 'hidden'
   }`;
 
@@ -67,7 +68,13 @@ const Room = ({ SERVER_URL, socket }) => {
       <div className='relative h-screen overflow-hidden w-screen grid items-center'>
         <IVP flip={UIProps.cameraFlip}></IVP>
         <div className='absolute z-50 h-screen w-full top-0'>
-          {blob && <PreviewCanvas modelProps={modelProps} glbFile={blob} />}
+          {blob && (
+            <PreviewCanvas
+              modelProps={modelProps}
+              glbFile={blob}
+              orbitControls={modelProps.orbitControls}
+            />
+          )}
         </div>
         <div className='absolute p-5 flex w-screen h-screen  justify-between gap-2 top-0'>
           <div className='flex z-50 gap-3 h-full'>
@@ -126,7 +133,7 @@ const Room = ({ SERVER_URL, socket }) => {
                   }></TbFlipVertical>
               </button>
               <button
-                className={`${buttonStyle} bg-text rounded-full text-mid`}>
+                className={`${buttonStyle} bg-text w-fit rounded-full text-mid`}>
                 <VscRecord />
               </button>
             </div>
@@ -153,16 +160,57 @@ const Room = ({ SERVER_URL, socket }) => {
               }>
               <BiZoomOut />
             </button>
-            {/* <button className={buttonStyle}>
-              <TbRotate360
-                onClick={() => {
-                  setModelProps({
-                    ...modelProps,
-                    rotation: modelProps.rotation + 0.2,
-                  });
-                }}
-              />
-            </button> */}
+
+            <button
+              className={buttonStyle + 'text-sm'}
+              onClick={() => {
+                setModelProps((mp) => ({
+                  ...mp,
+                  rotation: { ...mp.rotation, x: mp.rotation.x + 0.1 },
+                }));
+              }}>
+              Rotate X
+            </button>
+            <button
+              className={buttonStyle + 'text-sm'}
+              onClick={() => {
+                setModelProps((mp) => ({
+                  ...mp,
+                  rotation: { ...mp.rotation, y: mp.rotation.y + 0.1 },
+                }));
+              }}>
+              Rotate Y
+            </button>
+            <button
+              className={buttonStyle + 'text-sm'}
+              onClick={() => {
+                setModelProps((mp) => ({
+                  ...mp,
+                  rotation: { ...mp.rotation, z: mp.rotation.z + 0.1 },
+                }));
+              }}>
+              Rotate Z
+            </button>
+            <button
+              className={buttonStyle + 'text-xs '}
+              onClick={() => {
+                setModelProps((mp) => ({
+                  ...mp,
+                  rotation: { x: 0, y: 0, z: 0 },
+                }));
+              }}>
+              Reset Rotation
+            </button>
+            <button
+              className={buttonStyle + 'text-xs '}
+              onClick={() => {
+                setModelProps((mp) => ({
+                  ...mp,
+                  orbitControls: !mp.orbitControls,
+                }));
+              }}>
+              {modelProps.orbitControls ? 'Off Orb Ctrls' : 'On Orb Ctrls'}
+            </button>
           </div>
         </div>
       </div>

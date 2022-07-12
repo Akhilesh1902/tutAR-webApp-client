@@ -4,7 +4,7 @@ import PreviewCanvas from '../Admin/PreviewCanvas';
 import useFetch from '../customHooks/useFetch';
 import IVP from '../Utils/InlineVideoPlayer';
 import { BiZoomIn, BiZoomOut, BiCamera, BiCameraOff } from 'react-icons/bi';
-import { TbFlipVertical, TbRotate360, TbRotateClockwise } from 'react-icons/tb';
+import { TbFlipVertical } from 'react-icons/tb';
 import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
 import { MdFlipCameraIos } from 'react-icons/md';
 import { VscRecord } from 'react-icons/vsc';

@@ -14,7 +14,7 @@ const NewModel = ({ socket }) => {
     Class: '',
     Subject: '',
   });
-  const [modelProps, setModelProps] = useState({
+  const [modelProps] = useState({
     rotation: { x: 0, y: 0, z: 0 },
     autoRotate: false,
     scale: 1,

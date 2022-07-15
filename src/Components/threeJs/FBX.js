@@ -1,15 +1,16 @@
+import React, { useEffect } from 'react';
 import { useFrame, useLoader } from '@react-three/fiber';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-import { useEffect } from 'react';
+import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
 import * as THREE from 'three';
 
-const Model = ({ Url, modelProps, setModelData }) => {
+const FBX = ({ Url, modelProps, setModelData }) => {
   console.log(Url);
-  const result = useLoader(GLTFLoader, Url);
-  const { rotation: rot } = modelProps;
 
+  //   const [result] = useFBXModels(URL);
+  const result = useLoader(FBXLoader, Url);
   let mixer = null;
-  const { scale } = modelProps;
+
+  const { rotation: rot } = modelProps;
 
   useEffect(() => {
     console.log(result);
@@ -22,23 +23,17 @@ const Model = ({ Url, modelProps, setModelData }) => {
     const action = mixer.clipAction(result.animations[modelProps.curAnimIndex]);
     action.play();
   }
-
-  useFrame(({ clock }, delta) => {
-    const et = clock.getElapsedTime();
+  useFrame((delta) => {
     mixer?.update(delta);
-
-    if (!modelProps.autoRotate) return;
-    let rot = result.scene.rotation;
-    rot.x = et / 4;
-    rot.y = et;
-    rot.z = et / 2;
   });
+
+  const { scale } = modelProps;
 
   return (
     <>
-      {Url && result.scene && (
+      {Url && result && (
         <primitive
-          object={result.scene}
+          object={result}
           scale={[scale, scale, scale]}
           rotation={[rot.x, rot.y, rot.z]}
         />
@@ -47,4 +42,4 @@ const Model = ({ Url, modelProps, setModelData }) => {
   );
 };
 
-export default Model;
+export default FBX;

@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import Modal from '../Utils/Modal';
 import PreviewCanvas from './PreviewCanvas';
 
@@ -13,15 +13,19 @@ const NewModel = ({ socket }) => {
     name: '',
     Class: '',
     Subject: '',
+    animations: [],
   });
-  const [modelProps] = useState({
+  const [modelProps, setModelProps] = useState({
+    curAnimIndex: 0,
     rotation: { x: 0, y: 0, z: 0 },
     autoRotate: false,
     scale: 1,
     orbitControls: false,
   });
 
-  const [modelAnim, setModelAnim] = useState();
+  useEffect(() => {
+    console.log(modelData);
+  }, [modelData]);
 
   const onFileCange = (e) => {
     console.log(e.target.id);
@@ -35,9 +39,11 @@ const NewModel = ({ socket }) => {
     } else {
       const file = e.target.files[0];
       const name = file.name.replace(/ /g, '_');
-      if (!name.includes('.glb')) {
-        alert('upload glb file');
-        return;
+      console.log(name);
+      if (name.includes('.glb')) {
+        console.log(name.split('.')[1]);
+        // alert('upload glb file');
+        setModelData({ ...modelData, loader: name.split('.')[1] });
       }
       setModelData({ ...modelData, name, file });
       // console.log(name);
@@ -48,7 +54,9 @@ const NewModel = ({ socket }) => {
     e.preventDefault();
     console.log(modal);
     console.log('here');
-    socket.emit('_add_model', { modelData });
+    socket.emit('_add_model', {
+      modelData: { ...modelData, animations: null },
+    });
     setModal(false);
   };
 
@@ -102,13 +110,13 @@ const NewModel = ({ socket }) => {
                     modelProps={modelProps}
                     orbitControls
                     glbFile={modelData.file}
-                    setModelAnim={setModelAnim}
-                    modelAnim={modelAnim}
+                    modelData={modelData}
+                    setModelData={setModelData}
                   />
                 )}
               </div>
             </div>
-            <div className='flex flex-col'>
+            <div className='flex w-1/3 flex-col'>
               <h1>Add Additional</h1>
               <div className=' flex flex-col gap-2'>
                 <div className=' flex flex-col gap-1'>
@@ -134,6 +142,26 @@ const NewModel = ({ socket }) => {
                     }}
                     className='rounded text-dark px-2 py-1 outline-0'
                   />
+                </div>
+                <div className='flex flex-col w-full gap-2'>
+                  <p>Select Animations :</p>
+                  <div className='flex gap-2 flex-wrap w-full'>
+                    {modelData.animations.map((item, i) => {
+                      return (
+                        <button
+                          type='button'
+                          className='px-2 bg-mid text-dark'
+                          onClick={(e) => {
+                            setModelProps((md) => ({
+                              ...md,
+                              curAnimIndex: parseInt(e.target.innerText),
+                            }));
+                          }}>
+                          {i}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
             </div>

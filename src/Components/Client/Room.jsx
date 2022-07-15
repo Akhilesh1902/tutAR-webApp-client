@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import PreviewCanvas from '../Admin/PreviewCanvas';
-import useFetch from '../customHooks/useFetch';
+// import useFetch from '../customHooks/useFetch';
 import IVP from '../Utils/InlineVideoPlayer';
 import { BiZoomIn, BiZoomOut, BiCamera, BiCameraOff } from 'react-icons/bi';
 import { TbFlipVertical } from 'react-icons/tb';
@@ -18,6 +18,7 @@ const Room = ({ SERVER_URL, socket }) => {
     autoRotate: false,
     scale: 1,
     orbitControls: false,
+    curAnimIndex: 0,
   });
   const [UIProps, setUIProps] = useState({
     showUI: true,
@@ -27,32 +28,46 @@ const Room = ({ SERVER_URL, socket }) => {
     hideThumbnails: true,
   });
 
-  const [data] = useFetch(SERVER_URL, id);
+  // const [data, setData, singleData, setSingleDat] = useFetch(SERVER_URL, id);
+
+  const [data, setData] = useState();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (id !== '') {
+        const filterdData = await fetch(`${SERVER_URL}${id}`);
+        const json = await filterdData.json();
+        setData(json);
+        setModelData(json[0]);
+        socket.emit('_get_model', { addr: json[0].fileAddr });
+        console.log(json[0]);
+        console.log(json);
+        return;
+      }
+      const data = await fetch(`${SERVER_URL}modeldata`);
+      const json = await data.json();
+      setData(json);
+      // setSingleData(json[0]);
+    };
+
+    fetchData();
+    // eslint-disable-next-line
+  }, [id]);
 
   const buttonStyle = `bg-mid rounded w-full font-bold text-text text-center p-2 ${
     UIProps.showUI ? '' : 'hidden'
   }`;
 
   useEffect(() => {
-    // console.log(data);
-    if (data) setModelData(data[0]);
-  }, [data]);
-
-  useEffect(() => {
-    if (!modelData) return;
-    // console.log(modelData);
-    socket.emit('_get_model', { addr: modelData.fileAddr });
-    //eslint-disable-next-line
+    console.log(modelData);
   }, [modelData]);
-
-  // const BLob = useMemo(() => , [second])
 
   useEffect(() => {
     socket.off('_get_model').on('_get_model', ({ model }) => {
       const arrBuff = new Uint8Array(model);
       const blob = new Blob([arrBuff]);
       setBlob(blob);
-      // console.log(blob);
+      setModelData((md) => ({ ...md, file: blob }));
     });
   });
 
@@ -60,6 +75,8 @@ const Room = ({ SERVER_URL, socket }) => {
     const name = e.target.alt;
     if (modelData.name === name) return;
     const m = data.find((item) => item.name === name);
+    socket.emit('_get_model', { addr: m.fileAddr });
+
     setModelData(m);
   };
 
@@ -73,6 +90,8 @@ const Room = ({ SERVER_URL, socket }) => {
               modelProps={modelProps}
               glbFile={blob}
               orbitControls={modelProps.orbitControls}
+              modelData={modelData}
+              setModelData={setModelData}
             />
           )}
         </div>
@@ -136,6 +155,44 @@ const Room = ({ SERVER_URL, socket }) => {
                 className={`${buttonStyle} bg-text w-fit rounded-full text-mid`}>
                 <VscRecord />
               </button>
+              {modelData?.animations?.length ? (
+                <div className='flex flex-col  text-accent text-center gap-2'>
+                  <p>Anim</p>
+                  <div className='flex gap-2'>
+                    <button
+                      className={buttonStyle + 'text-xs w-fit'}
+                      type='button'
+                      onClick={() => {
+                        setModelProps((mp) => ({
+                          ...mp,
+                          curAnimIndex:
+                            mp.curAnimIndex === modelData.animations.length - 1
+                              ? 0
+                              : mp.curAnimIndex + 1,
+                        }));
+                      }}>
+                      +
+                    </button>
+                    <p>{modelProps.curAnimIndex}</p>
+                    <button
+                      className={buttonStyle + 'text-xs w-fit'}
+                      type='button'
+                      onClick={() => {
+                        // console.log(modelData);
+                        console.log(modelProps);
+                        setModelProps((mp) => ({
+                          ...mp,
+                          curAnimIndex:
+                            mp.curAnimIndex === 0
+                              ? modelData.animations.length - 1
+                              : mp.curAnimIndex - 1,
+                        }));
+                      }}>
+                      -
+                    </button>
+                  </div>
+                </div>
+              ) : null}
             </div>
           </div>
           <div className='text-3xl z-50 justify-self-end items-center flex flex-col gap-4 '>

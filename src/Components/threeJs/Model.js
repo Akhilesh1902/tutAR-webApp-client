@@ -4,7 +4,6 @@ import { useEffect } from 'react';
 import * as THREE from 'three';
 
 const Model = ({ Url, modelProps, setModelData }) => {
-  console.log(Url);
   const result = useLoader(GLTFLoader, Url);
   const { rotation: rot } = modelProps;
 
@@ -12,7 +11,6 @@ const Model = ({ Url, modelProps, setModelData }) => {
   const { scale } = modelProps;
 
   useEffect(() => {
-    console.log(result);
     if (result.animations)
       setModelData((data) => ({ ...data, animations: result.animations }));
   }, [result, setModelData]);

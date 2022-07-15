@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import useFetch from '../Components/customHooks/useFetch';
+import useFetch from '../customHooks/useFetch';
 import NavBar from '../Components/Utils/NavBar';
 
 const Class = ({ SERVER_URL }) => {

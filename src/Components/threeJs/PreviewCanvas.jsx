@@ -1,5 +1,5 @@
 import { Canvas } from '@react-three/fiber';
-import ModelWrapper from '../threeJs/ModelWrapper';
+import ModelWrapper from './ModelWrapper';
 import { OrbitControls } from '@react-three/drei';
 
 const PreviewCanvas = ({
@@ -8,7 +8,7 @@ const PreviewCanvas = ({
   modelData,
   setModelData,
 }) => {
-  console.log(modelData.file);
+  // console.log(modelData.file);
   return (
     <Canvas>
       {orbitControls && <OrbitControls />}

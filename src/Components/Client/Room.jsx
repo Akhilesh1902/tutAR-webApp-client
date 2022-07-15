@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import PreviewCanvas from '../Admin/PreviewCanvas';
+import PreviewCanvas from '../threeJs/PreviewCanvas';
 // import useFetch from '../customHooks/useFetch';
 import IVP from '../Utils/InlineVideoPlayer';
 import { BiZoomIn, BiZoomOut, BiCamera, BiCameraOff } from 'react-icons/bi';
@@ -40,8 +40,6 @@ const Room = ({ SERVER_URL, socket }) => {
         setData(json);
         setModelData(json[0]);
         socket.emit('_get_model', { addr: json[0].fileAddr });
-        console.log(json[0]);
-        console.log(json);
         return;
       }
       const data = await fetch(`${SERVER_URL}modeldata`);
@@ -57,10 +55,6 @@ const Room = ({ SERVER_URL, socket }) => {
   const buttonStyle = `bg-mid rounded w-full font-bold text-text text-center p-2 ${
     UIProps.showUI ? '' : 'hidden'
   }`;
-
-  useEffect(() => {
-    console.log(modelData);
-  }, [modelData]);
 
   useEffect(() => {
     socket.off('_get_model').on('_get_model', ({ model }) => {
@@ -83,7 +77,7 @@ const Room = ({ SERVER_URL, socket }) => {
   return (
     <div className='grid items-center  select-none  h-screen w-screen'>
       <div className='relative h-screen overflow-hidden w-screen grid items-center'>
-        <IVP flip={UIProps.cameraFlip}></IVP>
+        <IVP flip={UIProps.cameraFlip} active={UIProps.camera}></IVP>
         <div className='absolute z-50 h-screen w-full top-0'>
           {blob && (
             <PreviewCanvas
@@ -98,13 +92,7 @@ const Room = ({ SERVER_URL, socket }) => {
         <div className='absolute p-5 flex w-screen h-screen  justify-between gap-2 top-0'>
           <div className='flex z-50 gap-3 h-full'>
             <div className={`flex h-full justify-btween flex-col gap-3 `}>
-              <div className='flex flex-col gap-2'>
-                {UIProps.hideThumbnails ? null : (
-                  <Link
-                    to={'/calss'}
-                    className={`${buttonStyle} text-xs !w-full`}>{`< Back`}</Link>
-                )}
-              </div>
+              <div className='flex flex-col gap-2'></div>
               {UIProps.hideThumbnails ? null : (
                 <div className='flex flex-col gap-3'>
                   {data?.map((item, i) => {
@@ -125,6 +113,9 @@ const Room = ({ SERVER_URL, socket }) => {
               )}
             </div>
             <div className='text-3xl flex flex-col items-center gap-3'>
+              <Link
+                to={'/class'}
+                className={`${buttonStyle} text-xs !w-full`}>{`< Back`}</Link>
               <button
                 className={`${buttonStyle} text-xs`}
                 onClick={() => {
@@ -143,7 +134,11 @@ const Room = ({ SERVER_URL, socket }) => {
                 {UIProps.camera ? <BiCameraOff /> : <BiCamera />}
               </button>
               <button className={buttonStyle}>
-                <MdFlipCameraIos />
+                <MdFlipCameraIos
+                  onClick={() => {
+                    setUIProps((up) => ({ ...up, backCamera: !up.backCamera }));
+                  }}
+                />
               </button>
               <button className={buttonStyle}>
                 <TbFlipVertical
@@ -157,25 +152,12 @@ const Room = ({ SERVER_URL, socket }) => {
               </button>
               {modelData?.animations?.length ? (
                 <div className='flex flex-col  text-accent text-center gap-2'>
-                  <p>Anim</p>
+                  <p className={`text-text ${UIProps.showUI ? '' : 'hidden'} `}>
+                    Anim
+                  </p>
                   <div className='flex gap-2'>
                     <button
-                      className={buttonStyle + 'text-xs w-fit'}
-                      type='button'
-                      onClick={() => {
-                        setModelProps((mp) => ({
-                          ...mp,
-                          curAnimIndex:
-                            mp.curAnimIndex === modelData.animations.length - 1
-                              ? 0
-                              : mp.curAnimIndex + 1,
-                        }));
-                      }}>
-                      +
-                    </button>
-                    <p>{modelProps.curAnimIndex}</p>
-                    <button
-                      className={buttonStyle + 'text-xs w-fit'}
+                      className={'text-xs w-fit ' + buttonStyle}
                       type='button'
                       onClick={() => {
                         // console.log(modelData);
@@ -190,6 +172,24 @@ const Room = ({ SERVER_URL, socket }) => {
                       }}>
                       -
                     </button>
+                    <p
+                      className={`text-text ${UIProps.showUI ? '' : 'hidden'}`}>
+                      {modelProps.curAnimIndex}
+                    </p>
+                    <button
+                      className={'text-xs w-fit ' + buttonStyle}
+                      type='button'
+                      onClick={() => {
+                        setModelProps((mp) => ({
+                          ...mp,
+                          curAnimIndex:
+                            mp.curAnimIndex === modelData.animations.length - 1
+                              ? 0
+                              : mp.curAnimIndex + 1,
+                        }));
+                      }}>
+                      +
+                    </button>
                   </div>
                 </div>
               ) : null}
@@ -203,71 +203,116 @@ const Room = ({ SERVER_URL, socket }) => {
               }}>
               {UIProps.showUI ? <AiFillEyeInvisible /> : <AiFillEye />}
             </button>
-            <button
-              className={buttonStyle}
-              onClick={() =>
-                setModelProps((p) => ({ ...p, scale: (p.scale += 0.1) }))
-              }>
-              <BiZoomIn />
-            </button>
-            <button
-              className={buttonStyle}
-              onClick={() =>
-                setModelProps((p) => ({ ...p, scale: (p.scale -= 0.1) }))
-              }>
-              <BiZoomOut />
-            </button>
-
-            <button
-              className={buttonStyle + 'text-sm'}
-              onClick={() => {
-                setModelProps((mp) => ({
-                  ...mp,
-                  rotation: { ...mp.rotation, x: mp.rotation.x + 0.1 },
-                }));
-              }}>
-              Rotate X
-            </button>
-            <button
-              className={buttonStyle + 'text-sm'}
-              onClick={() => {
-                setModelProps((mp) => ({
-                  ...mp,
-                  rotation: { ...mp.rotation, y: mp.rotation.y + 0.1 },
-                }));
-              }}>
-              Rotate Y
-            </button>
-            <button
-              className={buttonStyle + 'text-sm'}
-              onClick={() => {
-                setModelProps((mp) => ({
-                  ...mp,
-                  rotation: { ...mp.rotation, z: mp.rotation.z + 0.1 },
-                }));
-              }}>
-              Rotate Z
-            </button>
-            <button
-              className={buttonStyle + 'text-xs '}
-              onClick={() => {
-                setModelProps((mp) => ({
-                  ...mp,
-                  rotation: { x: 0, y: 0, z: 0 },
-                }));
-              }}>
-              Reset Rotation
-            </button>
-            <button
-              className={buttonStyle + 'text-xs '}
-              onClick={() => {
-                setModelProps((mp) => ({
-                  ...mp,
-                  orbitControls: !mp.orbitControls,
-                }));
-              }}>
-              {modelProps.orbitControls ? 'Off Orb Ctrls' : 'On Orb Ctrls'}
-            </button>
+            {UIProps.showUI && (
+              <div className='flex flex-col gap-2'>
+                <div className='flex text-text text-xs  gap-1'>
+                  <button
+                    className={buttonStyle + 'p-0'}
+                    onClick={() =>
+                      setModelProps((p) => ({ ...p, scale: (p.scale += 0.1) }))
+                    }>
+                    <BiZoomIn />
+                  </button>
+                  <p>Zoom</p>
+                  <button
+                    className={buttonStyle + 'p-0'}
+                    onClick={() =>
+                      setModelProps((p) => ({ ...p, scale: (p.scale -= 0.1) }))
+                    }>
+                    <BiZoomOut />
+                  </button>
+                </div>
+                <div className='flex text-text gap-1'>
+                  <button
+                    className={buttonStyle + 'text-xs p-0'}
+                    onClick={() => {
+                      setModelProps((mp) => ({
+                        ...mp,
+                        rotation: { ...mp.rotation, x: mp.rotation.x - 0.1 },
+                      }));
+                    }}>
+                    -
+                  </button>
+                  <p className='text-xs '>RotateX</p>
+                  <button
+                    className={buttonStyle + 'text-xs p-0'}
+                    onClick={() => {
+                      setModelProps((mp) => ({
+                        ...mp,
+                        rotation: { ...mp.rotation, x: mp.rotation.x + 0.1 },
+                      }));
+                    }}>
+                    +
+                  </button>
+                </div>
+                <div className='flex text-text gap-1'>
+                  <button
+                    className={buttonStyle + 'text-xs p-0'}
+                    onClick={() => {
+                      setModelProps((mp) => ({
+                        ...mp,
+                        rotation: { ...mp.rotation, y: mp.rotation.y - 0.1 },
+                      }));
+                    }}>
+                    -
+                  </button>
+                  <p className='text-xs '>RotateY</p>
+                  <button
+                    className={buttonStyle + 'text-xs p-0'}
+                    onClick={() => {
+                      setModelProps((mp) => ({
+                        ...mp,
+                        rotation: { ...mp.rotation, y: mp.rotation.y + 0.1 },
+                      }));
+                    }}>
+                    +
+                  </button>
+                </div>
+                <div className='flex text-text gap-1'>
+                  <button
+                    className={buttonStyle + 'text-xs p-0'}
+                    onClick={() => {
+                      setModelProps((mp) => ({
+                        ...mp,
+                        rotation: { ...mp.rotation, z: mp.rotation.z - 0.1 },
+                      }));
+                    }}>
+                    -
+                  </button>
+                  <p className='text-xs '>RotateZ</p>
+                  <button
+                    className={buttonStyle + 'text-xs p-0'}
+                    onClick={() => {
+                      setModelProps((mp) => ({
+                        ...mp,
+                        rotation: { ...mp.rotation, z: mp.rotation.z + 0.1 },
+                      }));
+                    }}>
+                    +
+                  </button>
+                </div>
+                <button
+                  className={buttonStyle + 'text-xs '}
+                  onClick={() => {
+                    setModelProps((mp) => ({
+                      ...mp,
+                      rotation: { x: 0, y: 0, z: 0 },
+                    }));
+                  }}>
+                  Reset Rotation
+                </button>
+                <button
+                  className={buttonStyle + 'text-xs '}
+                  onClick={() => {
+                    setModelProps((mp) => ({
+                      ...mp,
+                      orbitControls: !mp.orbitControls,
+                    }));
+                  }}>
+                  {modelProps.orbitControls ? 'Off Orb Ctrls' : 'On Orb Ctrls'}
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>

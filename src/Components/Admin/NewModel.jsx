@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect } from 'react';
 import Modal from '../Utils/Modal';
-import PreviewCanvas from './PreviewCanvas';
+import PreviewCanvas from '../threeJs/PreviewCanvas';
 
 const NewModel = ({ socket }) => {
   const image_input_ref = useRef();
